@@ -1,0 +1,30 @@
+# Description: Deployment with 5 replicas
+# Deployment is used to create a ReplicaSet and Pods
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuber-deployment
+  labels:
+    app: kuber-deployment
+spec:
+  replicas: 5
+  minReadySeconds: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: http-server
+  template:
+    metadata:
+      labels:
+        app: http-server
+    spec:
+      containers:
+        - name: kuber-deployment-container
+          image: bokovets/kuber
+          ports:
+            - containerPort: 8000

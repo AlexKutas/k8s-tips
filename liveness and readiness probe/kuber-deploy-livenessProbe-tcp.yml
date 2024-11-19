@@ -1,0 +1,48 @@
+# Description: livelessProbe with tcp
+# LivenessProbe is used to know if the container is alive or not. If the container is not alive, then the container will be restarted.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuber-tcp
+  labels:
+    app: kuber
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kuber-server-tcp
+  template:
+    metadata:
+      labels:
+        app: kuber-server-tcp
+    spec:
+      containers:
+        - name: kuber-app-tcp
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 15 # Default value is 0. Minimum value is 0. It is the time to wait before performing the first probe.
+            periodSeconds: 10 # Default value is 10. Minimum value is 1. It is the time to wait between probes.
+            timeoutSeconds: 1 # Default value is 1. Minimum value is 1. It is the time to wait for the probe to return a result.
+            successThreshold: 1 # Default value is 1. Minimum value is 1. It is the number of consecutive successful probes for the container to be considered healthy.
+            failureThreshold: 3 # Default value is 3. Minimum value is 1. It is the number of consecutive failed probes for the container to be considered unhealthy.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuber-service-tcp
+  labels:
+    app: kuber-service-tcp
+spec:
+  selector:
+    app: kuber-server-tcp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+  type: NodePort

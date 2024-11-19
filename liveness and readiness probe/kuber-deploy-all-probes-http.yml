@@ -1,0 +1,60 @@
+# Description: startupProbe with exec
+# StartupProbe is used to know if the container is started or not. If the container is not started, then the container will be restarted.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuber-http-all-probes
+  labels:
+    app: kuber
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kuber-server-http-all-probes
+  template:
+    metadata:
+      labels:
+        app: kuber-server-http-all-probes
+    spec:
+      containers:
+        - name: kuber-app-http
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          startupProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/healthy # For test need create file /tmp/healthy manually
+            initialDelaySeconds: 10 # Default value is 0. Minimum value is 0. It is the time to wait before performing the first probe.
+            periodSeconds: 10 # Default value is 10. Minimum value is 1. It is the time to wait between probes.
+            failureThreshold: 30 # Default value is 3. Minimum value is 1. It is the number of consecutive failed probes for the container to be considered unhealthy.
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+          livenessProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/healthy
+            initialDelaySeconds: 5 # Default value is 0. Minimum value is 0. It is the time to wait before performing the first probe.
+            periodSeconds: 5 # Default value is 10. Minimum value is 1. It is the time to wait between probes.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuber-service-http-all-probes
+  labels:
+    app: kuber-service-http-all-probes
+spec:
+  selector:
+    app: kuber-server-http-all-probes
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+  type: NodePort

@@ -1,0 +1,12 @@
+# Description: Service with ExternalName type
+# ExternalName service type is a service that maps a service to a DNS name.
+# It is useful when you want to expose a service to external users without revealing the internal details of the service.
+# The externalName field in the service spec is used to specify the DNS name of the service.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuber-service-external-name
+spec:
+  type: ExternalName
+  externalName: example.com

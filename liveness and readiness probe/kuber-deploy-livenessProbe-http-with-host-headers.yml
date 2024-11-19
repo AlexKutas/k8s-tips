@@ -1,0 +1,50 @@
+# Description: livelessProbe with http
+# LivenessProbe is used to know if the container is alive or not. If the container is not alive, then the container will be restarted.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuber-http
+  labels:
+    app: kuber
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kuber-server-http
+  template:
+    metadata:
+      labels:
+        app: kuber-server-http
+    spec:
+      containers:
+        - name: kuber-app-http
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              httpHeaders:
+                - name: Host
+                  value: localhost
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 5 # Default value is 0. Minimum value is 0. It is the time to wait before performing the first probe.
+            periodSeconds: 5 # Default value is 10. Minimum value is 1. It is the time to wait between probes.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuber-service-http
+  labels:
+    app: kuber-service-http
+spec:
+  selector:
+    app: kuber-server-http
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+  type: NodePort

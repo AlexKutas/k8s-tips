@@ -1,0 +1,17 @@
+# Description: Service with ClusterIP type and None value
+# ClusterIP with the value None is a headless service
+# Headless service is used to expose the service without a cluster IP
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuber-service-headless
+spec:
+  selector:
+    app: http-server
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP

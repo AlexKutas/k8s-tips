@@ -1,0 +1,15 @@
+# Description: Service with ClusterIP type
+# ClusterIP service type is the default service type. It exposes the service on a cluster-internal IP.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuber-service
+spec:
+  selector:
+    app: http-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP

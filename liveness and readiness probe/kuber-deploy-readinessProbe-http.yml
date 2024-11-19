@@ -1,0 +1,31 @@
+# Description: readinessProbe with http
+# ReadinessProbe is used to know if the container is ready to receive traffic or not. If the container is not ready, then the container will not receive traffic.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuber-http
+  labels:
+    app: kuber
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: http-server
+  template:
+    metadata:
+      labels:
+        app: http-server
+    spec:
+      containers:
+        - name: kuber-deployment
+          image: bokovets/kuber:v2.0
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 5 # Default value is 0. Minimum value is 0. It is the time to wait before performing the first probe.
+            periodSeconds: 5 # Default value is 10. Minimum value is 1. It is the time to wait between probes.
