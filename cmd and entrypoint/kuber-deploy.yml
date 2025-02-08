@@ -17,8 +17,8 @@ spec:
       containers:
         - name: kuber-app-args
           image: k8s-tips:latest
-          command: ["python3", "-u", "server-default.py"]
-          args: ["1", "3"]
+          command: ["python3", "-u", "server-default.py"] # set the default command
+          args: ["1", "3"] # set the default arguments
           ports:
             - containerPort: 8000
 ---
